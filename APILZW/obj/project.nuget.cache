@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "xOjvCPjRMwgsO/cFNu2ST07glbEK3rAt6aiqwG8ho8SSZbWItElmXmNxgs6Hf/+6phnkU7UlkC9jHpglZIm6Eg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\victo\\source\\repos\\APILZW\\APILZW\\APILZW.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\victo\\.nuget\\packages\\microsoft.aspnetcore.http.features\\3.1.9\\microsoft.aspnetcore.http.features.3.1.9.nupkg.sha512",
+    "C:\\Users\\victo\\.nuget\\packages\\microsoft.extensions.primitives\\3.1.9\\microsoft.extensions.primitives.3.1.9.nupkg.sha512",
+    "C:\\Users\\victo\\.nuget\\packages\\system.io.pipelines\\4.7.3\\system.io.pipelines.4.7.3.nupkg.sha512"
+  ],
+  "logs": []
+}

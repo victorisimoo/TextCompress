@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "z+vDrL5hbgSmSsTEB+sSLFAjI4+emO6YRhQ2Y6Dek7YreXGPvp+5ykhN9JLYPwg8M6XqT96ALfRMEYmEmlNC6w==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\victo\\source\\repos\\APILZW\\LZWCompress\\LZWCompress.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\victo\\.nuget\\packages\\microsoft.aspnetcore.http.features\\3.1.9\\microsoft.aspnetcore.http.features.3.1.9.nupkg.sha512",
+    "C:\\Users\\victo\\.nuget\\packages\\microsoft.extensions.primitives\\3.1.9\\microsoft.extensions.primitives.3.1.9.nupkg.sha512",
+    "C:\\Users\\victo\\.nuget\\packages\\system.io.pipelines\\4.7.3\\system.io.pipelines.4.7.3.nupkg.sha512"
+  ],
+  "logs": []
+}

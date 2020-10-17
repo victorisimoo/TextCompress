@@ -1,0 +1,9 @@
+C:\Users\victo\source\repos\APILZW\LZWCompress\bin\Debug\netcoreapp3.1\LZWCompress.deps.json
+C:\Users\victo\source\repos\APILZW\LZWCompress\bin\Debug\netcoreapp3.1\LZWCompress.dll
+C:\Users\victo\source\repos\APILZW\LZWCompress\bin\Debug\netcoreapp3.1\LZWCompress.pdb
+C:\Users\victo\source\repos\APILZW\LZWCompress\obj\Debug\netcoreapp3.1\LZWCompress.csprojAssemblyReference.cache
+C:\Users\victo\source\repos\APILZW\LZWCompress\obj\Debug\netcoreapp3.1\LZWCompress.AssemblyInfoInputs.cache
+C:\Users\victo\source\repos\APILZW\LZWCompress\obj\Debug\netcoreapp3.1\LZWCompress.AssemblyInfo.cs
+C:\Users\victo\source\repos\APILZW\LZWCompress\obj\Debug\netcoreapp3.1\LZWCompress.csproj.CoreCompileInputs.cache
+C:\Users\victo\source\repos\APILZW\LZWCompress\obj\Debug\netcoreapp3.1\LZWCompress.dll
+C:\Users\victo\source\repos\APILZW\LZWCompress\obj\Debug\netcoreapp3.1\LZWCompress.pdb
