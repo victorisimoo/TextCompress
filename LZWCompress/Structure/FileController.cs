@@ -21,37 +21,37 @@ namespace LZWCompress.Controllers {
         public void Compress(IFormFile file, string routeDirectory) {
 
             var bufferLenght = 1000;
-            var lettersDictionary = new Dictionary<string, string>();
-            var bufferEscritura = new List<byte>();
-            var listaCaracteres = new List<string>();
+            var dictionaryOfLetters = new Dictionary<string, string>();
+            var bbfWriting = new List<byte>();
+            var characterList = new List<string>();
             var byteBuffer = new byte[bufferLenght];
             var aux = string.Empty;
             var letter = string.Empty;
-            var anterior = string.Empty;
+            var lastLetter = string.Empty;
 
             if (!Directory.Exists(Path.Combine(routeDirectory, "compress"))) {
                 Directory.CreateDirectory(Path.Combine(routeDirectory, "compress"));
             }
 
             using (var readerFile = new BinaryReader(file.OpenReadStream())) {
-                using (var streamWriter = new FileStream(Path.Combine(routeDirectory, "compress", $"{Path.GetFileNameWithoutExtension(file.FileName)}.lzw"), FileMode.OpenOrCreate)) {
-                    using (var writer = new BinaryWriter(streamWriter)) {
+                using (var stream = new FileStream(Path.Combine(routeDirectory, "compress", $"{Path.GetFileNameWithoutExtension(file.FileName)}.lzw"), FileMode.OpenOrCreate)) {
+                    using (var writer = new BinaryWriter(stream)) {
                         while (readerFile.BaseStream.Position != readerFile.BaseStream.Length) {
                             byteBuffer = readerFile.ReadBytes(bufferLenght);
                             for (int i = 0; i < byteBuffer.Count(); i++) {
                                 letter = Convert.ToString(Convert.ToChar(byteBuffer[i]));
-                                if (!lettersDictionary.ContainsKey(letter)) {
-                                    var stringnum = Convert.ToString(lettersDictionary.Count() + 1, 2);
-                                    lettersDictionary.Add(letter, stringnum);
+                                if (!dictionaryOfLetters.ContainsKey(letter)) {
+                                    var number = Convert.ToString(dictionaryOfLetters.Count() + 1, 2);
+                                    dictionaryOfLetters.Add(letter, number);
                                     letter = string.Empty;
                                 }
                             }
                         }
 
-                        writer.Write(Encoding.ASCII.GetBytes(Convert.ToString(lettersDictionary.Count).PadLeft(8, '0').ToCharArray()));
+                        writer.Write(Encoding.ASCII.GetBytes(Convert.ToString(dictionaryOfLetters.Count).PadLeft(8, '0').ToCharArray()));
 
-                        foreach (var fila in lettersDictionary) {
-                            writer.Write(Convert.ToByte(Convert.ToChar(fila.Key[0])));
+                        foreach (var rowList in dictionaryOfLetters) {
+                            writer.Write(Convert.ToByte(Convert.ToChar(rowList.Key[0])));
                         }
 
                         readerFile.BaseStream.Position = 0;
@@ -61,46 +61,46 @@ namespace LZWCompress.Controllers {
                             byteBuffer = readerFile.ReadBytes(bufferLenght);
                             for (int i = 0; i < byteBuffer.Count(); i++) {
                                 letter += Convert.ToString(Convert.ToChar(byteBuffer[i]));
-                                if (!lettersDictionary.ContainsKey(letter)) {
-                                    var stringnum = Convert.ToString(lettersDictionary.Count() + 1, 2);
-                                    lettersDictionary.Add(letter, stringnum);
-                                    listaCaracteres.Add(lettersDictionary[anterior]);
-                                    anterior = string.Empty;
-                                    anterior += letter.Last();
-                                    letter = anterior;
+                                if (!dictionaryOfLetters.ContainsKey(letter)) {
+                                    var num = Convert.ToString(dictionaryOfLetters.Count() + 1, 2);
+                                    dictionaryOfLetters.Add(letter, num);
+                                    characterList.Add(dictionaryOfLetters[lastLetter]);
+                                    lastLetter = string.Empty;
+                                    lastLetter += letter.Last();
+                                    letter = lastLetter;
                                 } else {
-                                    anterior = letter;
+                                    lastLetter = letter;
                                 }
                             }
                         }
 
-                        listaCaracteres.Add(lettersDictionary[letter]);
+                        characterList.Add(dictionaryOfLetters[letter]);
 
-                        var cantMaxBits = Math.Log2((float)lettersDictionary.Count);
-                        cantMaxBits = cantMaxBits % 1 >= 0.5 ? Convert.ToInt32(cantMaxBits) : Convert.ToInt32(cantMaxBits) + 1;
+                        var mBites = Math.Log2((float)dictionaryOfLetters.Count);
+                        mBites = mBites % 1 >= 0.5 ? Convert.ToInt32(mBites) : Convert.ToInt32(mBites) + 1;
 
-                        writer.Write(Convert.ToByte(cantMaxBits));
+                        writer.Write(Convert.ToByte(mBites));
 
-                        for (int i = 0; i < listaCaracteres.Count; i++) {
-                            listaCaracteres[i] = listaCaracteres[i].PadLeft(Convert.ToInt32(cantMaxBits), '0');
+                        for (int i = 0; i < characterList.Count; i++) {
+                            characterList[i] = characterList[i].PadLeft(Convert.ToInt32(mBites), '0');
                         }
 
-                        foreach(var item in listaCaracteres) {
-                            aux += item;
+                        foreach(var character in characterList) {
+                            aux += character;
                             if (aux.Length >= 8) {
                                 var max = aux.Length / 8;
                                 for (int i = 0; i < max; i++) {
-                                    bufferEscritura.Add(Convert.ToByte(Convert.ToInt32(aux.Substring(0, 8), 2)));
+                                    bbfWriting.Add(Convert.ToByte(Convert.ToInt32(aux.Substring(0, 8), 2)));
                                     aux = aux.Substring(8);
                                 }
                             }
                         }
 
                         if (aux.Length != 0) {
-                            bufferEscritura.Add(Convert.ToByte(Convert.ToInt32(aux.PadRight(8, '0'), 2)));
+                            bbfWriting.Add(Convert.ToByte(Convert.ToInt32(aux.PadRight(8, '0'), 2)));
                         }
 
-                        writer.Write(bufferEscritura.ToArray());
+                        writer.Write(bbfWriting.ToArray());
 
                     }
                 }
