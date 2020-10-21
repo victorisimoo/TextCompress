@@ -10,15 +10,30 @@ namespace LZWCompress.Controllers {
 
     public class FileController : ICompressor {
 
-
+        /// <summary>
+        /// Method that will call the interface method
+        /// </summary>
+        /// <param name="file"> File sent (.txt) </param>
+        /// <param name="routeDirectory"> Current directory path </param>
         public void CompressFile(IFormFile file, string routeDirectory) {
             Compress(file, routeDirectory);
         }
 
+        /// <summary>
+        /// Method that will call the interface method
+        /// </summary>
+        /// <param name="file"> File sent (.lzw)</param>
+        /// <param name="routeDirectory">Current directory path</param>
+        /// <returns> Returns compressed element </returns>
         public string DecompressFile(IFormFile file, string routeDirectory) {
             return Decompress(file, routeDirectory);
         }
 
+        /// <summary>
+        /// Method for compressing the file
+        /// </summary>
+        /// <param name="file"> File sent (.txt) </param>
+        /// <param name="routeDirectory"> Current directory path </param>
         public void Compress(IFormFile file, string routeDirectory) {
 
             var bufferLenght = 1000;
@@ -108,13 +123,19 @@ namespace LZWCompress.Controllers {
             }
         }
 
+        /// <summary>
+        /// Método for descompressing the file
+        /// </summary>
+        /// <param name="file"> File sent (.huff)</param>
+        /// <param name="routeDirectory"> Current directory path </param>
+        /// <returns></returns>
         public string Decompress(IFormFile file, string routeDirectory) {
 
-            var DiccionarioLetras = new Dictionary<int, string>();
-            var bufferLenght = 10000;
-            var byteBuffer = new byte[bufferLenght];
-            var bufferEscritura = new List<byte>();
-            var auxActual = string.Empty;
+            var dictionaryOfLetters = new Dictionary<int, string>();
+            var bbfLenght = 10000;
+            var byteBff = new byte[bbfLenght];
+            var bbfWriting = new List<byte>();
+            var auxPrevious = string.Empty;
             var auxPrevio = string.Empty;
             var aux = string.Empty;
             var first = true;
@@ -128,49 +149,49 @@ namespace LZWCompress.Controllers {
                 using (var streamWriter = new FileStream(Path.Combine(routeDirectory, "decompress", $"{Path.GetFileNameWithoutExtension(file.FileName)}.txt"), FileMode.OpenOrCreate)) {
                     using (var writer = new BinaryWriter(streamWriter)) {
 
-                        byteBuffer = reader.ReadBytes(8);
-                        var CantDiccionario = Convert.ToInt32(Encoding.UTF8.GetString(byteBuffer));
+                        byteBff = reader.ReadBytes(8);
+                        var CantDiccionario = Convert.ToInt32(Encoding.UTF8.GetString(byteBff));
                         for (int i = 0; i < CantDiccionario; i++) {
-                            byteBuffer = reader.ReadBytes(1);
-                            var letra = Convert.ToChar(byteBuffer[0]).ToString();
-                            DiccionarioLetras.Add(DiccionarioLetras.Count() + 1, letra);
+                            byteBff = reader.ReadBytes(1);
+                            var letter = Convert.ToChar(byteBff[0]).ToString();
+                            dictionaryOfLetters.Add(dictionaryOfLetters.Count() + 1, letter);
                         }
 
-                        byteBuffer = reader.ReadBytes(1);
-                        var cantidadBits = Convert.ToInt32(byteBuffer[0]);
+                        byteBff = reader.ReadBytes(1);
+                        var numberOfBits = Convert.ToInt32(byteBff[0]);
 
                         while (reader.BaseStream.Position != reader.BaseStream.Length) {
-                            byteBuffer = reader.ReadBytes(bufferLenght);
-                            foreach (var item in byteBuffer) {
+                            byteBff = reader.ReadBytes(bbfLenght);
+                            foreach (var item in byteBff) {
                                 aux += Convert.ToString(item, 2).PadLeft(8, '0'); ;
-                                while (aux.Length >= cantidadBits){
-                                    var nuevoNum = Convert.ToInt32(aux.Substring(0, cantidadBits), 2);
-                                    if (nuevoNum != 0) {
+                                while (aux.Length >= numberOfBits){
+                                    var number = Convert.ToInt32(aux.Substring(0, numberOfBits), 2);
+                                    if (number != 0) {
                                         if (first){
                                             first = false;
-                                            auxPrevio = DiccionarioLetras[nuevoNum];
-                                            bufferEscritura.Add(Convert.ToByte(Convert.ToChar(auxPrevio)));
+                                            auxPrevio = dictionaryOfLetters[number];
+                                            bbfWriting.Add(Convert.ToByte(Convert.ToChar(auxPrevio)));
                                         }else {
-                                            if (nuevoNum > DiccionarioLetras.Count) {
-                                                auxActual = auxPrevio + auxPrevio.First();
-                                                DiccionarioLetras.Add(DiccionarioLetras.Count + 1, auxActual);
+                                            if (number > dictionaryOfLetters.Count) {
+                                                auxPrevious = auxPrevio + auxPrevio.First();
+                                                dictionaryOfLetters.Add(dictionaryOfLetters.Count + 1, auxPrevious);
                                             }else {
-                                                auxActual = DiccionarioLetras[nuevoNum];
-                                                DiccionarioLetras.Add(DiccionarioLetras.Count + 1, $"{auxPrevio}{auxActual.First()}");
+                                                auxPrevious = dictionaryOfLetters[number];
+                                                dictionaryOfLetters.Add(dictionaryOfLetters.Count + 1, $"{auxPrevio}{auxPrevious.First()}");
                                             }
 
-                                            foreach (var letra in auxActual) {
-                                                bufferEscritura.Add(Convert.ToByte(letra));
+                                            foreach (var letter in auxPrevious) {
+                                                bbfWriting.Add(Convert.ToByte(letter));
                                             }
 
-                                            auxPrevio = auxActual;
+                                            auxPrevio = auxPrevious;
                                         }
                                     }
-                                    aux = aux.Substring(cantidadBits);
+                                    aux = aux.Substring(numberOfBits);
                                 }
                             }
                         }
-                        writer.Write(bufferEscritura.ToArray());
+                        writer.Write(bbfWriting.ToArray());
                     }
                 }
             }
