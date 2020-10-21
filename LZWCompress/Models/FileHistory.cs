@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace LZWCompress.Model {
+
     /// <summary>
     /// Class for storing file metadata
     /// </summary>

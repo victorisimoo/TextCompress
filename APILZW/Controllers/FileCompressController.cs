@@ -4,6 +4,7 @@ using LZWCompress.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Mime;
 
@@ -49,6 +50,16 @@ namespace APILZW.Controllers {
         }
 
         /// <summary>
+        /// Method to return the metadata of compressed files
+        /// </summary>
+        /// <returns>Returns the objects within the information list</returns>
+        [HttpGet("compressions")]
+        public List<FileHistory> Compressions() {
+            return Storage.Instance.files;
+        }
+
+
+        /// <summary>
         /// Method to get the file sent
         /// </summary>
         /// <param name="file">File sent</param>
@@ -90,6 +101,7 @@ namespace APILZW.Controllers {
         public void DataMapping(IFormFile file) {
             Storage.Instance.actualFile = new FileHistory();
             Storage.Instance.actualFile.FileName = Path.GetFileNameWithoutExtension(file.FileName);
+            Storage.Instance.actualFile.FileCompressName = $"{Path.GetFileNameWithoutExtension(file.FileName)}.lzw";
             Storage.Instance.actualFile.CompressedFilePath = Path.Combine(
                 routeDirectory, "compress", $"{Path.GetFileNameWithoutExtension(file.FileName)}.lzw");
             Storage.Instance.actualFile.CompressionFactor = (double)(new FileInfo(Storage.Instance.actualFile.CompressedFilePath).Length / (double)file.Length);

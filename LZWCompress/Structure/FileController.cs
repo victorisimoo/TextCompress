@@ -7,17 +7,33 @@ using System.Linq;
 using System.Text;
 
 namespace LZWCompress.Controllers {
+
     public class FileController : ICompressor {
 
-
+        /// <summary>
+        /// Method that will call the interface method
+        /// </summary>
+        /// <param name="file"> File sent (.txt) </param>
+        /// <param name="routeDirectory"> Current directory path </param>
         public void CompressFile(IFormFile file, string routeDirectory) {
             Compress(file, routeDirectory);
         }
 
+        /// <summary>
+        /// Method that will call the interface method
+        /// </summary>
+        /// <param name="file"> File sent (.lzw)</param>
+        /// <param name="routeDirectory">Current directory path</param>
+        /// <returns> Returns compressed element </returns>
         public string DecompressFile(IFormFile file, string routeDirectory) {
             return Decompress(file, routeDirectory);
         }
 
+        /// <summary>
+        /// Method for compressing the file
+        /// </summary>
+        /// <param name="file"> File sent (.txt) </param>
+        /// <param name="routeDirectory"> Current directory path </param>
         public void Compress(IFormFile file, string routeDirectory) {
 
             var bufferLenght = 1000;
@@ -107,9 +123,79 @@ namespace LZWCompress.Controllers {
             }
         }
 
+        /// <summary>
+        /// Método for descompressing the file
+        /// </summary>
+        /// <param name="file"> File sent (.huff)</param>
+        /// <param name="routeDirectory"> Current directory path </param>
+        /// <returns></returns>
         public string Decompress(IFormFile file, string routeDirectory) {
 
-            return " ";
+            var dictionaryOfLetters = new Dictionary<int, string>();
+            var bbfLenght = 10000;
+            var byteBff = new byte[bbfLenght];
+            var bbfWriting = new List<byte>();
+            var auxPrevious = string.Empty;
+            var auxPrevio = string.Empty;
+            var aux = string.Empty;
+            var first = true;
+
+            
+            if (!Directory.Exists(Path.Combine(routeDirectory, "decompress"))) {
+                Directory.CreateDirectory(Path.Combine(routeDirectory, "decompress"));
+            }
+
+            using (var reader = new BinaryReader(file.OpenReadStream())) {
+                using (var streamWriter = new FileStream(Path.Combine(routeDirectory, "decompress", $"{Path.GetFileNameWithoutExtension(file.FileName)}.txt"), FileMode.OpenOrCreate)) {
+                    using (var writer = new BinaryWriter(streamWriter)) {
+
+                        byteBff = reader.ReadBytes(8);
+                        var CantDiccionario = Convert.ToInt32(Encoding.UTF8.GetString(byteBff));
+                        for (int i = 0; i < CantDiccionario; i++) {
+                            byteBff = reader.ReadBytes(1);
+                            var letter = Convert.ToChar(byteBff[0]).ToString();
+                            dictionaryOfLetters.Add(dictionaryOfLetters.Count() + 1, letter);
+                        }
+
+                        byteBff = reader.ReadBytes(1);
+                        var numberOfBits = Convert.ToInt32(byteBff[0]);
+
+                        while (reader.BaseStream.Position != reader.BaseStream.Length) {
+                            byteBff = reader.ReadBytes(bbfLenght);
+                            foreach (var item in byteBff) {
+                                aux += Convert.ToString(item, 2).PadLeft(8, '0'); ;
+                                while (aux.Length >= numberOfBits){
+                                    var number = Convert.ToInt32(aux.Substring(0, numberOfBits), 2);
+                                    if (number != 0) {
+                                        if (first){
+                                            first = false;
+                                            auxPrevio = dictionaryOfLetters[number];
+                                            bbfWriting.Add(Convert.ToByte(Convert.ToChar(auxPrevio)));
+                                        }else {
+                                            if (number > dictionaryOfLetters.Count) {
+                                                auxPrevious = auxPrevio + auxPrevio.First();
+                                                dictionaryOfLetters.Add(dictionaryOfLetters.Count + 1, auxPrevious);
+                                            }else {
+                                                auxPrevious = dictionaryOfLetters[number];
+                                                dictionaryOfLetters.Add(dictionaryOfLetters.Count + 1, $"{auxPrevio}{auxPrevious.First()}");
+                                            }
+
+                                            foreach (var letter in auxPrevious) {
+                                                bbfWriting.Add(Convert.ToByte(letter));
+                                            }
+
+                                            auxPrevio = auxPrevious;
+                                        }
+                                    }
+                                    aux = aux.Substring(numberOfBits);
+                                }
+                            }
+                        }
+                        writer.Write(bbfWriting.ToArray());
+                    }
+                }
+            }
+                return Path.Combine(routeDirectory, "decompress", Path.GetFileNameWithoutExtension(file.FileName));
         }
     }
 }
