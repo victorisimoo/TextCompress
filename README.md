@@ -26,6 +26,6 @@ En ciencia de la computación y teoría de la información, la codificación LZW
   - Porcentaje de reducción
 
 ## Implementación
-Para clonar el proyecto utilice el siguiente enlace: [https://github.com/victorisimoo/BookCompress.git]()
+Para clonar el proyecto utilice el siguiente enlace: [https://github.com/victorisimoo/TextCompress.git()
 
-`$ git clone https://github.com/victorisimoo/BookCompress.git `
+`$ git clone https://github.com/victorisimoo/TextCompress.git `
