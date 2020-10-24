@@ -1,6 +1,6 @@
 # TextCompress
 Proyecto para el curso de **Estructura de Datos II**, en el cual se implementa el algoritmo de compresión de **LZW**.
-Como parte del compromiso con el proyecto y el curso, se elaboraron dos soluciones, se adjunta en el link, la solución alternativa.  ([CompressionApp](https://github.com/Ale180820/CompressionApp))
+Como parte del compromiso con el proyecto y el curso, se elaboraron dos soluciones, se adjunta en el link, la solución alternativa.  ([CompressionApp](https://github.com/Ale180820/LZWApp.git))
 
 ## Codificación de LZW ([Wikipedia](https://es.wikipedia.org/wiki/LZW))
 En ciencia de la computación y teoría de la información, la codificación LZW es un algoritmo usado para compresión de datos.
